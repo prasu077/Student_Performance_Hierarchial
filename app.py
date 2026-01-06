@@ -27,6 +27,7 @@ st.markdown(
 
 st.divider()
 
+<<<<<<< HEAD
 # ------------------ FILE UPLOAD (FIXED) ------------------
 st.sidebar.header("📂 Upload Dataset")
 
@@ -40,6 +41,9 @@ if uploaded_file is None:
     st.stop()
 
 df = pd.read_csv(uploaded_file)
+=======
+
+>>>>>>> e40cda8ab1e46c5d0b7886f1e82964f545feb94b
 
 # ------------------ DATA PREPROCESSING ------------------
 numeric_df = df.select_dtypes(include="number")
