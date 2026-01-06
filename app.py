@@ -1,8 +1,8 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 import seaborn as sns
 import scipy.cluster.hierarchy as sch
+import matplotlib.pyplot as plt
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import AgglomerativeClustering
@@ -27,15 +27,22 @@ st.markdown(
 
 st.divider()
 
-# ------------------ LOAD DATA ------------------
-@st.cache_data
-def load_data():
-    return pd.read_csv("student_performance.csv")
+# ------------------ FILE UPLOAD (FIXED) ------------------
+st.sidebar.header("📂 Upload Dataset")
 
-df = load_data()
+uploaded_file = st.sidebar.file_uploader(
+    "Upload Student Performance CSV",
+    type=["csv"]
+)
+
+if uploaded_file is None:
+    st.warning("Please upload a CSV file to continue.")
+    st.stop()
+
+df = pd.read_csv(uploaded_file)
 
 # ------------------ DATA PREPROCESSING ------------------
-numeric_df = df.select_dtypes(include='number')
+numeric_df = df.select_dtypes(include="number")
 
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(numeric_df)
@@ -71,14 +78,14 @@ df["Cluster"] = clusters
 
 # ------------------ SILHOUETTE SCORE ------------------
 score = silhouette_score(X_scaled, clusters)
-
 st.success(f"🔹 Silhouette Score: **{score:.3f}**")
 
 # ------------------ CLUSTER SUMMARY ------------------
 st.subheader("📊 Cluster Summary (Mean Values)")
-
-cluster_summary = df.groupby("Cluster").mean(numeric_only=True)
-st.dataframe(cluster_summary, use_container_width=True)
+st.dataframe(
+    df.groupby("Cluster").mean(numeric_only=True),
+    use_container_width=True
+)
 
 # ------------------ VISUALIZATION ------------------
 st.subheader("📈 Cluster Visualization")
@@ -109,4 +116,3 @@ st.markdown("""
 
 *(Interpretation may vary based on dataset features)*
 """)
-
